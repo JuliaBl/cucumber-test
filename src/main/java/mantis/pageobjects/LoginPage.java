@@ -40,11 +40,17 @@ public class LoginPage extends Page<LoginPage> {
         return this;
     }
 
-    public <T extends Page> T tryLoginWithCredentials(String userName, String password, Class<T> tClass){
+    public <T extends Page<T>> T tryLoginWithCredentials(String userName, String password, Class<T> tClass){
        inputUserNameAndPassword(userName, password)
                .clickButtonLogin();
     try {
-            return tClass.getConstructor().newInstance();
+        if(tClass == LoginPage.class){
+            return  tClass.getConstructor().newInstance();
+        }
+        else {
+            return tClass.getConstructor().newInstance().openPage(tClass);
+        }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -57,8 +57,7 @@ public class MantisStepdefs {
       for(User u : userCredentials) {
        viewPage =
           loginPage
-                  .tryLoginWithCredentials(u.getUserName(), u.getPassword(), ViewPage.class)
-                  .openPage(ViewPage.class);
+                  .tryLoginWithCredentials(u.getUserName(), u.getPassword(), ViewPage.class);
        assertEquals(u.getUserName(), viewPage.getLoggedInAsText());
       }
     }
