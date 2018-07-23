@@ -54,7 +54,7 @@ public class LoginPage extends Page<LoginPage> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return (T) this;
     }
 
     public String getErrorMessageForInvalidCredentials(){

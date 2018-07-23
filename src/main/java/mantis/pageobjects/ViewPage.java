@@ -5,8 +5,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.io.IOException;
-
 public class ViewPage extends Page<ViewPage> {
 
     @FindBy(css = ".login-info-left .italic")
@@ -32,7 +30,7 @@ public class ViewPage extends Page<ViewPage> {
         return  loggedInAsText.getText();
     }
 
-    public LoginPage clickOnLogOut(){
+    public  LoginPage clickOnLogOut(){
         logOutLink.click();
         return new LoginPage();
     }
@@ -40,5 +38,9 @@ public class ViewPage extends Page<ViewPage> {
     public ManagePage clickOnManageLink() {
       manageLink.click();
       return new ManagePage().openPage(ManagePage.class);
+    }
+
+    public ManageProjectPage openManageProjectPage() {
+        return new ManageProjectPage().openPage(ManageProjectPage.class);
     }
 }

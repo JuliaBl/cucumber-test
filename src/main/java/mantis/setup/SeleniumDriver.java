@@ -19,22 +19,28 @@ public class SeleniumDriver {
     }
 
     public static synchronized WebDriver getDriver()  {
-        if (!Boolean.parseBoolean(config.isRemote())) {
-            if (driver == null) {
-                driver = new ChromeDriver();
-                System.out.println("Driver is initiated");
-            }
-        }
-        else{
-            DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-            try {
-                driver = new RemoteWebDriver(new URL(config.getRemoteUrl()), capabilities);
-                System.out.println("Driver is initiated");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+       if(driver == null) {
+           if (!Boolean.parseBoolean(config.isRemote())) {
+                     driver = new ChromeDriver();
+                   System.out.println("Driver is initiated");
+           } else {
+               DesiredCapabilities capabilities = DesiredCapabilities.chrome();
+               try {
+                   driver = new RemoteWebDriver(new URL(config.getRemoteUrl()), capabilities);
+                   System.out.println("Driver is initiated");
+               } catch (IOException e) {
+                   e.printStackTrace();
+               }
+           }
+       }
         driver.manage().window().maximize();
         return driver;
+    }
+
+    public static void close() {
+        if(driver != null) {
+            driver.quit();
+            driver = null;
+        }
     }
 }

@@ -10,9 +10,8 @@ import cucumber.api.java.Before;
 import cucumber.api.java.en.*;
 import java.util.List;
 import java.util.Random;
-
 import static junit.framework.TestCase.assertEquals;
-import static mantis.setup.SeleniumDriver.getDriver;
+import static mantis.setup.SeleniumDriver.close;
 
 public class MantisStepdefs {
     private String projectName;
@@ -29,73 +28,82 @@ public class MantisStepdefs {
 
     @After("@logOut")
     public void logOut(){
-              viewPage
+        viewPage
               .clickOnLogOut();
     }
 
     @After("@driverQuit")
     public void tearDown(){
-        getDriver().quit();
+        close();
     }
 
     @Given("^user$")
     public void user(List<User> users) {
-       for(User u : users){
-           System.out.println("User with login name " + u.getUserName() + " is initiated.");
-       }
+        users.stream().forEach(u -> System.out.println("User with login name " + u.getUserName() + " is initiated."));
     }
 
 
     @Given("^user has opened Mantis login page$")
-    public void user_has_opened_Mantis_login_page() {
-     loginPage = loginPage
+    public void userHasOpenedMantisLoginPage() {
+     loginPage=
+       loginPage
               .openPage(LoginPage.class);
     }
 
     @Then("^user specify valid credentials and click on button Login$")
-    public void user_specify_valid_credentials_and_click_on_button_Login(List<User> userCredentials) {
-      for(User u : userCredentials) {
+    public void userSpecifyValidCredentialsAndClickOnButtonLogin(List<User> userCredentials) {
+      User user = userCredentials.stream().findFirst().get();
        viewPage =
           loginPage
-                  .tryLoginWithCredentials(u.getUserName(), u.getPassword(), ViewPage.class);
-       assertEquals(u.getUserName(), viewPage.getLoggedInAsText());
-      }
+                  .tryLoginWithCredentials(user.getUserName(), user.getPassword(), ViewPage.class);
+       assertEquals(user.getUserName(), viewPage.getLoggedInAsText());
+
     }
 
     @Then("^user specify invalid credentials and click on button Login$")
-    public void user_specify_invalid_credentials_and_click_on_button_Login(List<User> userInvalidCredentials) {
-        for(User u : userInvalidCredentials) {
+    public void userSpecifyInvalidCredentialsAndClickOnButtonLogin(List<User> userInvalidCredentials) {
+        User user = userInvalidCredentials.stream().findFirst().get();
             loginPage
-                    .tryLoginWithCredentials(u.getUserName(), u.getPassword(), LoginPage.class);
-            assertEquals(loginPage.getErrorMessageForInvalidCredentials(), "Your account may be disabled or blocked or the username/password you entered is incorrect.");
-        }
+                    .tryLoginWithCredentials(user.getUserName(), user.getPassword(), LoginPage.class);
+
     }
 
     @Then("^user click on Manage link$")
-    public void user_click_on_Manage_link() {
-
+    public void userClickOnManageLink() {
+    managePage =
+                viewPage
+                        .clickOnManageLink();
     }
 
     @Then("^user click Manage Projects$")
-    public void user_click_Manage_Projects() {
-     managePage =
-         viewPage
-                .clickOnManageLink();
+    public void userClickManageProjects() {
+        manageProjectPage =
+                managePage
+                        .clickOnManageProjectLink();
     }
 
     @Then("^user click on button Create new Project$")
-    public void user_click_on_button_Create_new_Project() {
-     manageProjectPage =
-        managePage
-                .clickOnManageProjectLink();
+    public void userClickOnButtonCreateNewProject() {
+        manageProjectPage
+                .clickOnCreateNewProject();
     }
 
+    @When("^user open new Project url$")
+    public void userOpenNew_Project_url() {
+      manageProjectPage =
+        viewPage
+           .openManageProjectPage();
+    }
+
+
     @Then("^user specify project name and click on button Add Project$")
-    public void user_specify_project_name_and_click_on_button_Add_Project() {
+    public void userSpecifyProjectNameAndClickOnButtonAddProject() {
        manageProjectPage
-               .clickOnCreateNewProject()
                .inputProjectName(projectName)
                .clickOnAddProject();
        assertEquals("There is no such project", manageProjectPage.isProjectAdded(projectName), true);
+       viewPage =
+              new ViewPage()
+               .openPage(ViewPage.class);
     }
 }
